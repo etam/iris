@@ -58,20 +58,20 @@ class IrisApi(ABC):
         )
         return [Account.model_validate(account) for account in envelope]
 
-    async def make_heartbeat(self, rest_url: str, pupil_id: int | None = None) -> None:
+    async def make_heartbeat(self, pupil_id: int | None = None) -> None:
         await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             endpoint="mobile/heartbeat",
             pupil_id=pupil_id,
         )
 
     async def get_addressbook(
-            self, rest_url: str, box: str, pupil_id: int | None = None
+            self, box: str, pupil_id: int | None = None
     ) -> list[Address]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             endpoint="mobile/addressbook",
             query={"box": box},
             pupil_id=pupil_id,
@@ -80,7 +80,6 @@ class IrisApi(ABC):
 
     async def get_announcements(
             self,
-            rest_url: str,
             pupil_id: int,
             view: int = 6,
             last_sync_date: datetime = EPOCH_START_DATETIME,
@@ -89,7 +88,7 @@ class IrisApi(ABC):
     ) -> list[Announcement]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/announcements/byPupil",
             query={
@@ -104,7 +103,6 @@ class IrisApi(ABC):
 
     async def get_completed_lessons(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -114,7 +112,7 @@ class IrisApi(ABC):
     ) -> list[Lesson]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/lesson/byPupil",
             query={
@@ -130,7 +128,6 @@ class IrisApi(ABC):
 
     async def get_duty(
             self,
-            rest_url: str,
             pupil_id: int,
             last_sync_date: datetime = EPOCH_START_DATETIME,
             last_id: int = INT_MIN,
@@ -138,7 +135,7 @@ class IrisApi(ABC):
     ) -> list[Duty]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/school/duty/byPupil",
             query={
@@ -152,7 +149,6 @@ class IrisApi(ABC):
 
     async def get_exams(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -162,7 +158,7 @@ class IrisApi(ABC):
     ) -> list[Exam]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/exam/byPupil",
             query={
@@ -178,7 +174,6 @@ class IrisApi(ABC):
 
     async def get_grades(
             self,
-            rest_url: str,
             unit_id: int,
             pupil_id: int,
             period_id: int,
@@ -188,7 +183,7 @@ class IrisApi(ABC):
     ) -> list[Grade]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/grade/byPupil",
             query={
@@ -204,7 +199,6 @@ class IrisApi(ABC):
 
     async def get_grades_averages(
             self,
-            rest_url: str,
             unit_id: int,
             pupil_id: int,
             period_id: int,
@@ -213,7 +207,7 @@ class IrisApi(ABC):
     ) -> list[GradeAverage]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/grade/average/byPupil",
             query={
@@ -229,7 +223,6 @@ class IrisApi(ABC):
 
     async def get_grades_summary(
             self,
-            rest_url: str,
             unit_id: int,
             pupil_id: int,
             period_id: int,
@@ -238,7 +231,7 @@ class IrisApi(ABC):
     ) -> list[GradeSummary]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/grade/summary/byPupil",
             query={
@@ -253,7 +246,6 @@ class IrisApi(ABC):
 
     async def get_homework(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -263,7 +255,7 @@ class IrisApi(ABC):
     ) -> list[Homework]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/homework/byPupil",
             query={
@@ -278,11 +270,11 @@ class IrisApi(ABC):
         return [Homework.model_validate(homework) for homework in envelope]
 
     async def get_kindergarten_hours(
-            self, rest_url: str, pupil_id: int, constituent_unit_id: int
+            self, pupil_id: int, constituent_unit_id: int
     ) -> KindergartenHours:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/school/hours",
             query={"pupilId": pupil_id, "constituentId": constituent_unit_id},
@@ -291,7 +283,6 @@ class IrisApi(ABC):
 
     async def get_kindergarten_teachers(
             self,
-            rest_url: str,
             pupil_id: int,
             last_sync_date: datetime = EPOCH_START_DATETIME,
             last_id: int = INT_MIN,
@@ -299,7 +290,7 @@ class IrisApi(ABC):
     ) -> list[Teacher]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/teacher/kindergarten/byPupil",
             query={
@@ -313,14 +304,13 @@ class IrisApi(ABC):
 
     async def get_lucky_number(
             self,
-            rest_url: str,
             pupil_id: int,
             constituent_unit_id: int,
             day: date = date.today(),
     ) -> LuckyNumber:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/school/lucky",
             query={
@@ -333,7 +323,6 @@ class IrisApi(ABC):
 
     async def get_meal_menu(
             self,
-            rest_url: str,
             pupil_id: int,
             full: bool,
             date_from: date,
@@ -344,7 +333,7 @@ class IrisApi(ABC):
     ) -> list[MealMenu]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/eatery",
             query={
@@ -361,7 +350,6 @@ class IrisApi(ABC):
 
     async def get_meetings(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             last_sync_date: datetime = EPOCH_START_DATETIME,
@@ -370,7 +358,7 @@ class IrisApi(ABC):
     ) -> list[Meeting]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/meetings/byPupil",
             query={
@@ -385,7 +373,6 @@ class IrisApi(ABC):
 
     async def get_notes(
             self,
-            rest_url: str,
             pupil_id: int,
             last_id: int = INT_MIN,
             page_size: int = DEFAULT_PAGE_SIZE,
@@ -393,7 +380,7 @@ class IrisApi(ABC):
     ) -> list[Note]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/note/byPupil",
             query={
@@ -407,7 +394,6 @@ class IrisApi(ABC):
 
     async def get_planned_lessons(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -417,7 +403,7 @@ class IrisApi(ABC):
     ) -> list[Lesson]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/lesson/planned/byPupil",
             query={
@@ -433,7 +419,6 @@ class IrisApi(ABC):
 
     async def get_presence_extra(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -443,7 +428,7 @@ class IrisApi(ABC):
     ) -> list[PresenceExtra]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/presence/extra/byPupil",
             query={
@@ -459,14 +444,13 @@ class IrisApi(ABC):
 
     async def get_presence_extra_info(
             self,
-            rest_url: str,
             pupil_id: int,
             weak_ref_id: int,
             type_: int
     ) -> PresenceExtraInfo:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/presence/extra/info",
             query={
@@ -478,11 +462,11 @@ class IrisApi(ABC):
         return PresenceExtraInfo.model_validate(envelope)
 
     async def get_presence_month_stats(
-            self, rest_url: str, pupil_id: int, period_id: int
+            self, pupil_id: int, period_id: int
     ) -> list[PresenceMonthStats]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/presence/stats/perMonth",
             query={
@@ -493,11 +477,11 @@ class IrisApi(ABC):
         return [PresenceMonthStats.model_validate(month) for month in envelope]
 
     async def get_presence_subject_stats(
-            self, rest_url: str, pupil_id: int, period_id: int
+            self, pupil_id: int, period_id: int
     ) -> list[PresenceSubjectStats]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/presence/stats/perSubject",
             query={
@@ -509,7 +493,6 @@ class IrisApi(ABC):
 
     async def get_received_messages(
             self,
-            rest_url: str,
             box: str,
             pupil_id: int,
             last_id: int = INT_MIN,
@@ -518,7 +501,7 @@ class IrisApi(ABC):
     ) -> list[Message]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/messages/received/byBox",
             query={
@@ -533,7 +516,6 @@ class IrisApi(ABC):
 
     async def get_schedule(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -543,7 +525,7 @@ class IrisApi(ABC):
     ) -> list[Schedule]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/schedule/withchanges/byPupil",
             query={
@@ -559,7 +541,6 @@ class IrisApi(ABC):
 
     async def get_schedule_extra(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -569,7 +550,7 @@ class IrisApi(ABC):
     ) -> list[ScheduleExtra]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/schedule/extra/withchanges/byPupil",
             query={
@@ -585,13 +566,12 @@ class IrisApi(ABC):
 
     async def get_school_info(
             self,
-            rest_url: str,
             pupil_id: int,
             last_sync_date: datetime = EPOCH_START_DATETIME,
     ) -> list[SchoolInfo]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/school/info",
             query={
@@ -603,7 +583,6 @@ class IrisApi(ABC):
 
     async def get_teachers(
             self,
-            rest_url: str,
             period_id: int,
             pupil_id: int,
             last_sync_date: datetime = EPOCH_START_DATETIME,
@@ -612,7 +591,7 @@ class IrisApi(ABC):
     ) -> list[Teacher]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/teacher/byPeriod",
             query={
@@ -636,11 +615,11 @@ class IrisApi(ABC):
         return [Timeslot.model_validate(timeslot) for timeslot in envelope]
 
     async def get_trips(
-            self, rest_url: str, pupil_id: int, date_from: date, date_to: date
+            self, pupil_id: int, date_from: date, date_to: date
     ) -> list[Trip]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/trips/byPupil",
             query={
@@ -653,12 +632,11 @@ class IrisApi(ABC):
 
     async def get_user_events(
             self,
-            rest_url: str,
             pupil_id: int,
     ) -> list[UserEvent]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/userEvents/byPupil",
             query={
@@ -669,7 +647,6 @@ class IrisApi(ABC):
 
     async def get_vacations(
             self,
-            rest_url: str,
             pupil_id: int,
             date_from: date,
             date_to: date,
@@ -679,7 +656,7 @@ class IrisApi(ABC):
     ) -> list[Vacation]:
         envelope = await self._http.request(
             method="GET",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             endpoint="mobile/school/vacation",
             query={
@@ -695,7 +672,6 @@ class IrisApi(ABC):
 
     async def change_message_importance(
             self,
-            rest_url: str,
             box_key: str,
             message_key: str,
             importance: bool,
@@ -704,7 +680,7 @@ class IrisApi(ABC):
         await self._http.request(
             method="POST",
             endpoint="mobile/messages/importance",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             payload={
                 "BoxKey": box_key,
@@ -715,7 +691,6 @@ class IrisApi(ABC):
 
     async def change_message_status(
             self,
-            rest_url: str,
             box_key: str,
             message_key: str,
             status: int,
@@ -724,7 +699,7 @@ class IrisApi(ABC):
         await self._http.request(
             method="POST",
             endpoint="mobile/messages/status",
-            rest_url=rest_url,
+            rest_url=self._credential.rest_url,
             pupil_id=pupil_id,
             payload={
                 "BoxKey": box_key,
